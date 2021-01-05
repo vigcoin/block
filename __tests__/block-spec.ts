@@ -144,10 +144,10 @@ describe('read from file', () => {
   //   blockNew.pop();
   // });
 
-  // test('should get last item', () => {
-  //   const last = block.last;
-  //   expect(last).toBeTruthy();
-  // });
+  test('should get last item', () => {
+    const last = block.last;
+    expect(last).toBeTruthy();
+  });
 
   test('should get height', () => {
     const height = block.height;

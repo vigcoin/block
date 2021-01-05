@@ -296,6 +296,10 @@ export class Block {
   }
 
   get last() {
-    return this.get(this.height - 1);
+    // offsets inserted a [0] when initialized.
+    // the length is this.offsets - 1
+    // the last index is length - 1
+    const idx = this.offsets.length - 2;
+    return this.get(idx);
   }
 }

@@ -44,6 +44,7 @@ describe('test raw block', () => {
       expect(items[i] === items1[i]).toBeTruthy();
     }
     b.popOffsets();
+    expect(b.length > 0).toBeTruthy();
   });
 
   test('Should remove block index', () => {
