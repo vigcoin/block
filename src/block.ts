@@ -1,6 +1,6 @@
-import { Amount, CNFashHash, HASH_LENGTH, IHash } from "@vigcoin/crypto";
-import { BufferStreamReader, BufferStreamWriter } from "@vigcoin/serializer";
-import { Transaction } from "@vigcoin/transaction";
+import { Amount, CNFashHash, HASH_LENGTH, IHash } from '@vigcoin/crypto';
+import { BufferStreamReader, BufferStreamWriter } from '@vigcoin/serializer';
+import { Transaction } from '@vigcoin/transaction';
 import {
   Configuration,
   IBlock,
@@ -8,17 +8,17 @@ import {
   IBlockHeader,
   ITransaction,
   uint64,
-  usize
-} from "@vigcoin/types";
-import * as assert from "assert";
+  usize,
+} from '@vigcoin/types';
+import * as assert from 'assert';
 import {
   closeSync,
   existsSync,
   openSync,
   readSync,
   statSync,
-  writeSync
-} from "fs";
+  writeSync,
+} from 'fs';
 
 export class Block {
   public static writeBlockHeader(
@@ -42,12 +42,12 @@ export class Block {
       version: {
         major,
         minor,
-        patch: 0
+        patch: 0,
       },
       // tslint:disable-next-line:object-literal-sort-keys
       timestamp,
       preHash,
-      nonce
+      nonce,
     };
   }
 
@@ -65,12 +65,12 @@ export class Block {
       case 0:
         return Buffer.from(
           CNFashHash(Buffer.concat([hashes[start], hashes[start]])),
-          "hex"
+          'hex'
         );
       case 1:
         return Buffer.from(
           CNFashHash(Buffer.concat([hashes[start], hashes[start + 1]])),
-          "hex"
+          'hex'
         );
       default:
         const mid = gap / 2;
@@ -78,17 +78,17 @@ export class Block {
           CNFashHash(
             Buffer.concat([
               Block.merkleHash(hashes, start, mid),
-              Block.merkleHash(hashes, mid + 1, end)
+              Block.merkleHash(hashes, mid + 1, end),
             ])
           ),
-          "hex"
+          'hex'
         );
     }
   }
 
   // Generate Hash for a block
   public static hash(block: IBlock): Buffer {
-    return Buffer.from(CNFashHash(Block.toBuffer(block)), "hex");
+    return Buffer.from(CNFashHash(Block.toBuffer(block)), 'hex');
   }
 
   // Generate Hash for a block
@@ -113,7 +113,7 @@ export class Block {
 
   // Generate genesis block
   public static genesis(conf: Configuration.ICBlock): IBlock {
-    const genesis = Buffer.from(conf.genesisCoinbaseTxHex, "hex");
+    const genesis = Buffer.from(conf.genesisCoinbaseTxHex, 'hex');
     const reader: BufferStreamReader = new BufferStreamReader(genesis);
     const transaction: ITransaction = Transaction.read(reader);
     return {
@@ -121,10 +121,10 @@ export class Block {
         nonce: 70,
         preHash: Buffer.alloc(HASH_LENGTH),
         timestamp: 0,
-        version: conf.version
+        version: conf.version,
       },
       transaction,
-      transactionHashes: []
+      transactionHashes: [],
     };
   }
 
@@ -139,7 +139,7 @@ export class Block {
     return {
       header,
       transaction,
-      transactionHashes
+      transactionHashes,
     };
   }
 
@@ -200,7 +200,7 @@ export class Block {
     const reward = penalizedBaseReward + penalizedFee;
     return {
       emission,
-      reward
+      reward,
     };
   }
 
@@ -224,7 +224,7 @@ export class Block {
   }
 
   public read(offset: number, length: number): IBlockEntry {
-    const fd = openSync(this.filename, "r");
+    const fd = openSync(this.filename, 'r');
     const buffer = Buffer.alloc(length);
     readSync(fd, buffer, 0, length, offset);
     const reader = new BufferStreamReader(buffer);
@@ -246,7 +246,7 @@ export class Block {
       // tslint:disable-next-line:object-literal-sort-keys
       difficulty,
       generatedCoins,
-      transactions
+      transactions,
     };
   }
   public write(blockEntry: IBlockEntry, offset: number = 0) {
@@ -260,7 +260,7 @@ export class Block {
     for (const tx of blockEntry.transactions) {
       Transaction.writeEntry(writer, tx);
     }
-    const fd = openSync(this.filename, "r+");
+    const fd = openSync(this.filename, 'r+');
     writeSync(fd, writer.getBuffer(), offset);
     closeSync(fd);
     return writer.getBuffer().length;
@@ -280,8 +280,8 @@ export class Block {
 
   public pop() {
     const offset = this.offsets.pop();
-    const fd = openSync(this.filename, "r+");
-    writeSync(fd, "", offset);
+    const fd = openSync(this.filename, 'r+');
+    writeSync(fd, '', offset);
     closeSync(fd);
   }
 
