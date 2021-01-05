@@ -18,6 +18,8 @@ describe('test block indexes', () => {
     });
     expect(!blockIndex.empty()).toBeTruthy();
     expect(blockIndex.height).toBeTruthy();
+
+    blockIndex.popOffsets();
   });
 });
 
