@@ -1,4 +1,4 @@
-import { CNFashHash, HASH_LENGTH, IHash } from "@vigcoin/crypto";
+import { Amount, CNFashHash, HASH_LENGTH, IHash } from "@vigcoin/crypto";
 import { BufferStreamReader, BufferStreamWriter } from "@vigcoin/serializer";
 import { Transaction } from "@vigcoin/transaction";
 import {
@@ -7,7 +7,8 @@ import {
   IBlockEntry,
   IBlockHeader,
   ITransaction,
-  uint64
+  uint64,
+  usize
 } from "@vigcoin/types";
 import * as assert from "assert";
 import {
@@ -151,12 +152,64 @@ export class Block {
     }
   }
 
+  public static getReward(
+    medianSize: usize,
+    currentBlockSize: usize,
+    alreadyGeneratedCoins: uint64,
+    fee: uint64,
+    parameters: {
+      [x: string]: number;
+    }
+  ) {
+    assert(alreadyGeneratedCoins <= parameters.MONEY_SUPPLY);
+    assert(parameters.EMISSION_SPEED_FACTOR > 0);
+    assert(parameters.EMISSION_SPEED_FACTOR <= 8 * 8);
+    // tslint:disable-next-line:no-bitwise
+    let baseReward =
+      // tslint:disable-next-line:no-bitwise
+      (parameters.MONEY_SUPPLY - alreadyGeneratedCoins) >>>
+      parameters.EMISSION_SPEED_FACTOR;
+    if (alreadyGeneratedCoins === 0) {
+      baseReward =
+        (parameters.MONEY_SUPPLY * parameters.PREMINED_PERCENTAGE) / 100;
+    }
+    if (alreadyGeneratedCoins + baseReward >= parameters.MONEY_SUPPLY) {
+      baseReward = 0;
+    }
+    if (medianSize < parameters.CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE) {
+      medianSize = parameters.CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
+    }
+
+    if (currentBlockSize > 2 * medianSize) {
+      // logger.error(
+      //   "Block cumulative size is too big: " +
+      //     currentBlockSize +
+      //     ", expected less than " +
+      //     2 * medianSize
+      // );
+      return false;
+    }
+
+    const penalizedBaseReward = Amount.getPenalized(
+      baseReward,
+      medianSize,
+      currentBlockSize
+    );
+    const penalizedFee = Amount.getPenalized(fee, medianSize, currentBlockSize);
+    const emission = penalizedBaseReward - (fee - penalizedFee);
+    const reward = penalizedBaseReward + penalizedFee;
+    return {
+      emission,
+      reward
+    };
+  }
+
   private filename: string;
   private offsets: uint64[];
 
   constructor(filename: string) {
     this.filename = filename;
-    this.offsets = [];
+    this.offsets = [0];
   }
 
   public empty(): boolean {
@@ -222,10 +275,7 @@ export class Block {
   }
 
   public get(index: number) {
-    return this.read(
-      index === 1 ? 0 : this.offsets[index - 1],
-      this.offsets[index]
-    );
+    return this.read(this.offsets[index], this.offsets[index + 1]);
   }
 
   public pop() {
@@ -236,9 +286,7 @@ export class Block {
   }
 
   public push(be: IBlockEntry) {
-    const offset = this.offsets.length
-      ? 0
-      : this.offsets[this.offsets.length - 1];
+    const offset = this.offsets[this.offsets.length - 1];
     const length = this.write(be, offset);
     this.offsets.push(offset + length);
   }

@@ -1,6 +1,6 @@
-import { Amount } from "@vigcoin/crypto";
-import { uint64, usize } from "@vigcoin/types";
-import { assert } from "console";
+import { Amount } from '@vigcoin/crypto';
+import { uint64, usize } from '@vigcoin/types';
+import { assert } from 'console';
 
 export function getReward(
   medianSize: usize,
@@ -42,6 +42,6 @@ export function getReward(
   const reward = penalizedBaseReward + penalizedFee;
   return {
     emission,
-    reward
+    reward,
   };
 }
