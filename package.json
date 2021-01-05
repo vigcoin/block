@@ -33,6 +33,9 @@
     "watch:test": "jest --watch"
   },
   "dependencies": {
+    "@vigcoin/crypto": "^0.6.5",
+    "@vigcoin/serializer": "^0.1.1",
+    "@vigcoin/transaction": "^0.1.0",
     "@vigcoin/types": "^0.1.1"
   },
   "devDependencies": {
