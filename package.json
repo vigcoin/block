@@ -18,7 +18,8 @@
   "main": "lib/index",
   "types": "lib/index",
   "bin": {
-    "bi": "lib/block-index-cli.js"
+    "bi": "lib/block-index-cli.js",
+    "block": "lib/block-cli.js"
   },
   "scripts": {
     "clean": "rimraf lib && rimraf coverage",

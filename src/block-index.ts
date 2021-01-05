@@ -83,6 +83,10 @@ export class BlockIndex {
     return this._height;
   }
 
+  get length() {
+    return this.offsets.length;
+  }
+
   public popOffsets() {
     this.offsets.pop();
     this.writeHeight(this.offsets.length);
