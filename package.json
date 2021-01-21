@@ -1,6 +1,6 @@
 {
   "name": "@vigcoin/block",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "block",
   "license": "MIT",
   "repository": "",
@@ -24,11 +24,11 @@
   "scripts": {
     "clean": "rimraf lib && rimraf coverage",
     "format": "prettier --write \"{src,__tests__}/**/*.ts\" --single-quote --trailing-comma es5",
-    "lint": "tslint --force --format verbose \"src/**/*.ts\"",
+    "lint": "tslint --fix --force --format verbose \"src/**/*.ts\"",
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean && npm run format && npm run lint && echo Using TypeScript && tsc --version",
     "build": "tsc --pretty",
-    "test": "jest --coverage",
+    "test": "npm run build && jest --coverage",
     "coverage": "jest --coverage",
     "watch": "npm run build -- --watch",
     "watch:test": "jest --watch"
@@ -37,7 +37,8 @@
     "@vigcoin/crypto": "^0.6.5",
     "@vigcoin/serializer": "^0.1.1",
     "@vigcoin/transaction": "^0.1.0",
-    "@vigcoin/types": "^0.1.1"
+    "@vigcoin/types": "^0.1.1",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@types/jest": "^23.3.3",

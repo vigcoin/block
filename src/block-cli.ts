@@ -4,6 +4,8 @@ import { resolve } from 'path';
 import { Block } from './block';
 import { BlockIndex } from './block-index';
 
+import * as moment from 'moment';
+
 const [, , ...pathes] = process.argv;
 for (const path of pathes) {
   const absPath = resolve(process.cwd(), path);
@@ -27,9 +29,13 @@ for (const path of pathes) {
 
     for (let i = 0; i < length; i++) {
       const entry = block.get(i);
+      console.log('time : ', entry.block.header.timestamp);
+      const time = moment(new Date(entry.block.header.timestamp * 1000)).format(
+        'YYYY-MM-DD hh:mm:ss'
+      );
       // tslint:disable-next-line: no-console
       console.log(
-        'At height :',
+        time + ': ' + 'At height :',
         entry.height,
         ', generated coins is ',
         entry.generatedCoins,
