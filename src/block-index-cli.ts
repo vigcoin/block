@@ -11,7 +11,7 @@ for (const file of files) {
 
   const bi = new BlockIndex(file);
   let idx = 0;
-  bi.init(i => {
+  bi.init((i) => {
     // tslint:disable-next-line: no-console
     console.log(idx++, ':' + i);
   });

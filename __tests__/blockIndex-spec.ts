@@ -13,7 +13,7 @@ describe('test block indexes', () => {
   });
 
   test('Should test block index loading', () => {
-    blockIndex.init(i => {
+    blockIndex.init((i) => {
       console.log(i);
     });
     expect(!blockIndex.empty()).toBeTruthy();

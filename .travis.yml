@@ -1,7 +1,9 @@
 sudo: required
 language: node_js
 node_js:
-  - 'lts/*' # use latest lts nodejs version
+  - v14
+  - v12
+  - v10
 env:
   - CXX=g++-4.8
 addons:
@@ -24,4 +26,4 @@ before_install:
 script:
   - npm run coverage # jest test with coverage flag does coverage too
 after_script:
-  - 'cat coverage/lcov.info | ./node_modules/.bin/coveralls' # sends the coverage report to coveralls
+  - "cat coverage/lcov.info | ./node_modules/.bin/coveralls" # sends the coverage report to coveralls
